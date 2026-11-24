@@ -13,6 +13,8 @@ const RoomCard = ({room}) => {
         <p className="text-sm px-4 text-gray-600">${room.pricePerNight}/per night
         </p>
         <button onClick={()=>{
+          //This part ise used when user click the see details button they will send to room details page
+          //from react router dom here router is used to show the room dta when see details button is clicked
           navigate(`/room/${room._id}`);
           window.scrollTo({top:0,behavior:"smooth"})
         }}

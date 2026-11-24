@@ -1,10 +1,13 @@
+
 import React, { useState, useContext } from "react";
+import { UserRound } from "lucide-react";
 import { assets } from "../assets/assets.js";
 import { Link } from "react-router-dom";
 import { AppContext } from "../context/AppContext.jsx";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
-  const { navigate } = useContext(AppContext);
+  const { navigate, user, setUser } = useContext(AppContext);
 
   const navLinks = [
     { name: "Home", path: "/" },
@@ -15,12 +18,26 @@ const Navbar = () => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const logout = async () => {
+    // logout function is used to log out the user by setting the user state to false.
+    // toast.success() displays a success notification after the user logs out.
+    setUser(false);
+    setIsMenuOpen(false);
+    navigate("/");
+    toast.success("logout successfull");
+  };
+
   return (
-    <nav className="fixed top-0 left-0 bg-[#FF6347] w-full flex items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 transition-all duration-500 z-50 py-4 md:py-6 text-white">
+    <nav
+      className="fixed top-0 left-0 bg-[#FF6347] w-full flex
+     items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 transition-all duration-500 z-50 py-4 md:py-6 text-white"
+    >
       {/* Logo */}
-      <Link to="/" 
-      //This Link tag is used when clicking on the logo, it will navigate to the home page without reloading the page.
-      className="flex items-center gap-2">
+      <Link
+        to="/"
+        //This Link tag is used when clicking on the logo, it will navigate to the home page without reloading the page.
+        className="flex items-center gap-2"
+      >
         <img src={assets.logo} alt="Logo" className="h-9" />
       </Link>
 
@@ -37,19 +54,61 @@ const Navbar = () => {
           </Link>
         ))}
 
-        <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer text-white transition-all">
+        <button
+          onClick={() => {
+            navigate("/owner");
+            setIsMenuOpen(false);
+          }}
+          className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all"
+        >
           Owner
         </button>
       </div>
 
       {/* Desktop Right */}
       <div className="hidden md:flex items-center gap-4">
-        <button
-          onClick={() => navigate("/login")}
-          className="px-8 py-2.5 rounded-full ml-4 transition-all duration-500 bg-white text-black hover:bg-primary hover:text-white cursor-pointer"
-        >
-          Login
-        </button>
+        {user ? (
+          <div className="relative group inline-block">
+            <UserRound className="w-12 h-12 rounded-full bg-white text-gray-700 p-2 cursor-pointer" />
+
+            {/* Dromdown Menu */}
+            <div
+              className="absolute top-full right-0 w-40
+                 bg-white shadow-lg rounded-md opacity-0 group-hover:opacity-100 
+                 group-hover:visible invisible transition duration-300 z-50"
+            >
+              <ul className="py-2">
+                <li>
+                  <Link
+                    //this part links to mybooking page
+                    to={"/my-bookings"}
+                    className="block px-4 py-2 text-sm text-gray-700
+                   hover:bg-gray-100
+                  "
+                  >
+                    My Bookings
+                  </Link>
+                </li>
+                <li
+                  onClick={logout}
+                  //this performs the log out
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700
+                   hover:bg-gray-100 cursor-pointer"
+                >
+                  Logout
+                </li>
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={() => navigate("/login")}
+            className="px-8 py-2.5 rounded-full ml-4 transition-all duration-500 bg-white text-black
+           hover:bg-primary hover:text-white cursor-pointer"
+          >
+            Login
+          </button>
+        )}
       </div>
 
       {/* Mobile Menu Button */}
@@ -90,21 +149,51 @@ const Navbar = () => {
 
         {navLinks.map((link, i) => (
           <Link key={i} to={link.path} onClick={() => setIsMenuOpen(false)}>
-            {link.name} 
+            {link.name}
           </Link> //Link component for navigation links in the mobile menu so no page reload
         ))}
 
-        <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all">
-          Owner
-        </button>
         <button
           onClick={() => {
-            navigate("/login");
+            navigate("/owner");
+            setIsMenuOpen(false);
           }}
-          className="px-8 py-2.5 rounded-full bg-white text-black hover:bg-primary hover:text-white transition-all duration-500 "
+          className="border border-primary px-6 py-2 text-sm font-medium rounded-full cursor-pointer
+           text-primary hover:bg-primary hover:text-white transition-all"
         >
-          Login
+          Owner
         </button>
+
+        {user ? (
+          <>
+            <Link
+              to="/my-bookings"
+              onClick={() => setIsMenuOpen(false)}
+              className="text-gray-800"
+            >
+              My Bookings
+            </Link>
+
+            <button
+              onClick={logout}
+              className="px-8 py-2.5 rounded-full bg-primary text-white hover:bg-blue-700 transition-all duration-500 cursor-pointer"
+            >
+              Logout
+            </button>
+
+            <UserRound className="w-12 h-12 rounded-full bg-gray-100 text-gray-700 p-2" />
+          </>
+        ) : (
+          <button
+            onClick={() => {
+              navigate("/login");
+              setIsMenuOpen(false);
+            }}
+            className="px-8 py-2.5 rounded-full bg-primary text-white hover:bg-blue-700 transition-all duration-500 cursor-pointer"
+          >
+            Login
+          </button>
+        )}
       </div>
     </nav>
   );

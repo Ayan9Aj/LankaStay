@@ -1,23 +1,30 @@
-import React, { useState } from "react";
+
+import React, { useContext, useState } from "react";
 import { Mail,Lock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
+import toast from "react-hot-toast"
 const Login = () => {
-  const [state, setState] = useState("login");
+const { user, setUser, navigate } = useContext(AppContext);
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   }); //useState is used to manage the state of the form data, which includes email, and password fields.
 
+  const [state, setState] = useState("login");
+
   const onChangeHandler = (e) => {
     setFormData({
-      ...formData,
-      [e.target.name]: e.target.value, //e.target.name is used to dynamically update the corresponding field in the formData state based on the input field's name attribute.
+      ...formData,[e.target.name]: e.target.value, //e.target.name is used to dynamically update the corresponding field in the formData state based on the input field's name attribute.
     });
   }; //onChangeHandler is a function that updates the formData state whenever an input field changes.
 
   const submitHandler =async(e) => {
     e.preventDefault();
+    toast.success("login successful")
+    setUser(true);
+    navigate("/")
     console.log("Form submitted:", formData);
   }; //submitHandler is a function that handles the form submission, preventing the default behavior and logging the form data to the console.
 
